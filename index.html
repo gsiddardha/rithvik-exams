@@ -3,279 +3,491 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rithvik's Final Exams 📚</title>
+<title>Rithvik's Exam Planner 📚</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
     min-height: 100vh;
     color: #fff;
-    padding: 20px;
+    padding: 16px;
+    padding-bottom: 100px;
   }
-
-  .header {
-    text-align: center;
-    padding: 30px 0 10px;
-  }
-
+  .header { text-align: center; padding: 24px 0 8px; }
   .header h1 {
-    font-size: 2rem;
-    font-weight: 800;
+    font-size: 1.8rem; font-weight: 800;
     background: linear-gradient(90deg, #f9d423, #ff4e50);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
+  .header p { color: #a9a9c8; margin-top: 4px; font-size: 0.9rem; }
 
-  .header p {
-    color: #a9a9c8;
-    margin-top: 6px;
-    font-size: 0.95rem;
+  /* Tabs */
+  .tabs {
+    display: flex; justify-content: center; gap: 8px;
+    margin: 20px auto; flex-wrap: wrap; max-width: 700px;
   }
+  .tab {
+    padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05); color: #a9a9c8;
+    transition: all 0.2s;
+  }
+  .tab:hover { border-color: rgba(255,255,255,0.3); }
+  .tab.active { border-color: var(--accent); color: #fff; background: rgba(255,255,255,0.1); }
 
+  /* Countdown */
   .countdown-banner {
-    text-align: center;
-    margin: 20px auto;
-    padding: 16px 24px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 16px;
-    max-width: 500px;
-    backdrop-filter: blur(10px);
+    text-align: center; margin: 16px auto; padding: 14px 20px;
+    background: rgba(255,255,255,0.07); border-radius: 14px;
+    max-width: 500px; backdrop-filter: blur(10px);
   }
+  .countdown-banner .label { font-size: 0.8rem; color: #a9a9c8; text-transform: uppercase; letter-spacing: 1px; }
+  .countdown-banner .time { font-size: 1.8rem; font-weight: 800; color: #f9d423; margin-top: 2px; }
 
-  .countdown-banner .label {
-    font-size: 0.85rem;
-    color: #a9a9c8;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+  /* Schedule View */
+  .view { display: none; max-width: 800px; margin: 0 auto; }
+  .view.active { display: block; }
 
-  .countdown-banner .time {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #f9d423;
-    margin-top: 4px;
-  }
-
-  .countdown-banner .time.done {
-    color: #4ade80;
-    font-size: 1.4rem;
-  }
-
-  .calendar {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    max-width: 900px;
-    margin: 30px auto;
-  }
-
+  /* Exam Cards */
+  .calendar { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 20px 0; }
   .exam-card {
-    background: rgba(255,255,255,0.06);
-    border-radius: 16px;
-    padding: 24px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.08);
-    transition: transform 0.2s, box-shadow 0.2s;
-    position: relative;
-    overflow: hidden;
+    background: rgba(255,255,255,0.06); border-radius: 14px; padding: 20px;
+    backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
   }
-
-  .exam-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  .exam-card:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(0,0,0,0.3); }
+  .exam-card .accent { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+  .exam-card .emoji { font-size: 1.8rem; margin-bottom: 6px; display: block; }
+  .exam-card .subject { font-size: 1.3rem; font-weight: 700; }
+  .exam-card .date { margin-top: 8px; font-size: 0.9rem; color: #c4b5fd; font-weight: 600; }
+  .exam-card .day-name { font-size: 0.8rem; color: #a9a9c8; }
+  .exam-card .progress-bar { margin-top: 12px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+  .exam-card .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .exam-card .progress-text { font-size: 0.75rem; color: #a9a9c8; margin-top: 4px; }
+  .exam-card .badge {
+    margin-top: 10px; font-size: 0.8rem; padding: 3px 10px;
+    border-radius: 16px; display: inline-block; font-weight: 600;
   }
+  .badge.upcoming { background: rgba(249,212,35,0.15); color: #f9d423; }
+  .badge.soon { background: rgba(255,78,80,0.15); color: #ff4e50; }
+  .badge.today { background: rgba(74,222,128,0.2); color: #4ade80; }
+  .badge.done { background: rgba(148,148,180,0.15); color: #9494b4; }
+  .exam-card.past-card { opacity: 0.5; }
 
-  .exam-card .accent {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
+  /* Subject Detail View */
+  .subject-view { display: none; max-width: 700px; margin: 0 auto; }
+  .subject-view.active { display: block; }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+    background: rgba(255,255,255,0.08); border: none; color: #a9a9c8;
+    border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-family: inherit;
+    margin-bottom: 16px; transition: background 0.2s;
   }
+  .back-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .subject-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .subject-header .emoji { font-size: 2.5rem; }
+  .subject-header h2 { font-size: 1.6rem; font-weight: 800; }
+  .subject-header .exam-date { font-size: 0.9rem; color: #c4b5fd; }
+  .overall-progress { margin-bottom: 24px; }
+  .overall-progress .bar { height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
+  .overall-progress .fill { height: 100%; border-radius: 5px; transition: width 0.3s; }
+  .overall-progress .text { font-size: 0.85rem; color: #a9a9c8; margin-top: 6px; }
 
-  .exam-card .exam-num {
-    font-size: 0.75rem;
-    color: #a9a9c8;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
+  .chapter-list { list-style: none; }
+  .chapter-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+    background: rgba(255,255,255,0.05); border-radius: 12px;
+    margin-bottom: 8px; cursor: pointer; transition: background 0.2s;
+    border: 1px solid rgba(255,255,255,0.05);
   }
-
-  .exam-card .subject {
-    font-size: 1.5rem;
-    font-weight: 700;
+  .chapter-item:hover { background: rgba(255,255,255,0.1); }
+  .chapter-item.completed { opacity: 0.6; }
+  .chapter-item.completed .ch-name { text-decoration: line-through; }
+  .checkbox {
+    width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.2s; font-size: 0.8rem;
   }
+  .chapter-item.completed .checkbox { border-color: #4ade80; background: #4ade80; color: #000; }
+  .ch-num { font-size: 0.75rem; color: #a9a9c8; min-width: 28px; }
+  .ch-name { font-size: 0.95rem; font-weight: 500; flex: 1; }
 
-  .exam-card .date {
-    margin-top: 10px;
-    font-size: 1rem;
-    color: #c4b5fd;
+  /* Study Plan View */
+  .study-day {
+    background: rgba(255,255,255,0.05); border-radius: 14px; padding: 16px 20px;
+    margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.06);
+  }
+  .study-day.today-highlight { border: 1px solid #f9d423; background: rgba(249,212,35,0.05); }
+  .study-day.past-day { opacity: 0.4; }
+  .study-day .day-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+  }
+  .study-day .day-title { font-weight: 700; font-size: 1rem; }
+  .study-day .day-date { font-size: 0.8rem; color: #a9a9c8; }
+  .study-day .day-tag {
+    font-size: 0.7rem; padding: 2px 8px; border-radius: 10px;
     font-weight: 600;
   }
-
-  .exam-card .day-name {
-    font-size: 0.85rem;
-    color: #a9a9c8;
+  .study-day .tasks { list-style: none; }
+  .study-day .task {
+    display: flex; align-items: center; gap: 8px; padding: 6px 0;
+    font-size: 0.9rem; color: #d1d1e0;
   }
+  .study-day .task .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  .exam-card .days-left {
-    margin-top: 12px;
-    font-size: 0.85rem;
-    padding: 4px 12px;
-    border-radius: 20px;
-    display: inline-block;
-    font-weight: 600;
-  }
-
-  .days-left.upcoming { background: rgba(249,212,35,0.15); color: #f9d423; }
-  .days-left.soon { background: rgba(255,78,80,0.15); color: #ff4e50; }
-  .days-left.today { background: rgba(74,222,128,0.2); color: #4ade80; }
-  .days-left.done { background: rgba(148,148,180,0.15); color: #9494b4; }
-
-  .exam-card.past { opacity: 0.5; }
-  .exam-card.today-card { border: 2px solid #4ade80; }
-
-  .tip {
-    text-align: center;
-    margin: 30px auto;
-    padding: 20px;
-    max-width: 500px;
-    color: #a9a9c8;
-    font-size: 0.9rem;
-    line-height: 1.6;
-  }
-
+  .tip { text-align: center; margin: 24px auto; padding: 16px; max-width: 500px; color: #a9a9c8; font-size: 0.85rem; line-height: 1.6; }
   .tip strong { color: #f9d423; }
 
-  .emoji { font-size: 2rem; margin-bottom: 8px; display: block; }
-
   @media (max-width: 600px) {
-    .header h1 { font-size: 1.5rem; }
-    .countdown-banner .time { font-size: 1.5rem; }
+    .header h1 { font-size: 1.4rem; }
     .calendar { grid-template-columns: 1fr; }
+    .tabs { gap: 6px; }
+    .tab { padding: 6px 12px; font-size: 0.8rem; }
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>📚 Rithvik's Final Exams</h1>
-  <p>Class 5 &middot; March 2026</p>
+  <h1>📚 Rithvik's Exam Planner</h1>
+  <p>Class 5 CBSE &middot; Final Exams &middot; March 2026</p>
 </div>
 
 <div class="countdown-banner">
-  <div class="label">Exams begin in</div>
+  <div class="label" id="countdown-label">Exams begin in</div>
   <div class="time" id="countdown"></div>
 </div>
 
-<div class="calendar" id="calendar"></div>
+<div class="tabs">
+  <div class="tab active" data-view="schedule" style="--accent:#f9d423">📅 Schedule</div>
+  <div class="tab" data-view="plan" style="--accent:#6366f1">📖 Study Plan</div>
+</div>
 
-<div class="tip">
+<div class="view active" id="view-schedule">
+  <div class="calendar" id="calendar"></div>
+</div>
+
+<div class="view" id="view-plan">
+  <div id="study-plan"></div>
+</div>
+
+<div class="subject-view" id="subject-detail"></div>
+
+<div class="tip" id="tip">
   <strong>💪 You've got this, Rithvik!</strong><br>
-  Study a little every day. Take breaks. Stay hydrated. You'll ace it!
+  Tap any subject to see chapters & track your progress!
 </div>
 
 <script>
-const exams = [
-  { subject: "English",   date: "2026-03-17", emoji: "📖", color: "#6366f1" },
-  { subject: "Social",    date: "2026-03-19", emoji: "🌍", color: "#f59e0b" },
-  { subject: "Maths",     date: "2026-03-23", emoji: "🔢", color: "#ef4444" },
-  { subject: "Kannada",   date: "2026-03-25", emoji: "✍️", color: "#10b981" },
-  { subject: "Sanskrit",  date: "2026-03-27", emoji: "📜", color: "#8b5cf6" },
-  { subject: "Science",   date: "2026-03-31", emoji: "🔬", color: "#06b6d4" },
+const subjects = [
+  {
+    subject: "English", date: "2026-03-17", emoji: "📖", color: "#6366f1",
+    chapters: [
+      "Wonderful Waste!", "Flying Together", "Robinson Crusoe",
+      "My Elder Brother", "Rip Van Winkle", "Talkative Barber",
+      "Gulliver's Travels", "Nobody's Friend", "Sing a Song of People",
+      "Malu Bhalu", "Who Will be Ningthou?", "The Tame Bird"
+    ]
+  },
+  {
+    subject: "Social", date: "2026-03-19", emoji: "🌍", color: "#f59e0b",
+    chapters: [
+      "Super Senses", "A Snake Charmer's Story", "From Tasting to Digesting",
+      "Mangoes Round the Year", "Seeds and Seeds", "Every Drop Counts",
+      "Experiments with Water", "A Treat for Mosquitoes", "Up You Go!",
+      "Walls Tell Stories", "Sunita in Space", "What If It Finishes?",
+      "A Shelter So High!", "When the Earth Shook!", "Blow Hot Blow Cold",
+      "Who Will Do This Work?", "Across the Wall", "No Place for Us?",
+      "A Seed Tells a Farmer's Story", "Whose Forests?",
+      "Like Father, Like Daughter", "On the Move Again"
+    ]
+  },
+  {
+    subject: "Maths", date: "2026-03-23", emoji: "🔢", color: "#ef4444",
+    chapters: [
+      "The Fish Tale", "Shapes and Angles", "How Many Squares?",
+      "Parts and Wholes", "Does it Look the Same?", "Be My Multiple, I'll Be Your Factor",
+      "Can You See the Pattern?", "Mapping Your Way",
+      "Boxes and Sketches", "Tenths and Hundredths",
+      "Area and its Boundary", "Smart Charts",
+      "Ways to Multiply and Divide", "How Big? How Heavy?"
+    ]
+  },
+  {
+    subject: "Kannada", date: "2026-03-25", emoji: "✍️", color: "#10b981",
+    chapters: [
+      "ಪದ್ಯ - ನಮ್ಮ ದೇಶ", "ಗದ್ಯ - ಕನ್ನಡ ನಾಡು",
+      "ಪದ್ಯ - ಮಳೆ ಬಂತು", "ಗದ್ಯ - ಪರಿಸರ ಸ್ನೇಹಿ",
+      "ಪದ್ಯ - ಹಬ್ಬ", "ಗದ್ಯ - ಸ್ನೇಹ",
+      "ವ್ಯಾಕರಣ (Grammar)", "ಪತ್ರ ಲೇಖನ (Letter Writing)",
+      "ಪ್ರಬಂಧ (Essay Writing)"
+    ]
+  },
+  {
+    subject: "Sanskrit", date: "2026-03-27", emoji: "📜", color: "#8b5cf6",
+    chapters: [
+      "नमस्कारः", "कालबोधः (Time)", "आदेशपालनम् (Obedience)",
+      "विद्यालयः (School)", "वृक्षाः (Trees)", "शरीरम् (Body Parts)",
+      "पर्यावरणम् (Environment)", "सुभाषितानि (Good Sayings)",
+      "संख्या (Numbers)", "व्याकरणम् (Grammar)"
+    ]
+  },
+  {
+    subject: "Science", date: "2026-03-31", emoji: "🔬", color: "#06b6d4",
+    chapters: [
+      "Super Senses", "A Snake Charmer's Story",
+      "From Tasting to Digesting", "Mangoes Round the Year",
+      "Seeds and Seeds", "Every Drop Counts",
+      "Experiments with Water", "A Treat for Mosquitoes",
+      "Up You Go!", "Walls Tell Stories",
+      "Sunita in Space", "What If It Finishes?"
+    ]
+  }
 ];
 
 const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const STORAGE_KEY = "rithvik_exams_progress";
 
-function today() {
-  const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+// Load/save progress
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+function saveProgress(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+
+function today() { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function toDateObj(s) { return new Date(s + "T00:00:00"); }
+function daysUntil(s) { return Math.ceil((toDateObj(s) - today()) / 864e5); }
+function formatDate(s) { const d = toDateObj(s); return `${d.getDate()} ${monthNames[d.getMonth()]}`; }
+function getDayName(s) { return dayNames[toDateObj(s).getDay()]; }
+
+function getProgress(subjectIdx) {
+  const p = loadProgress();
+  const key = subjects[subjectIdx].subject;
+  const done = p[key] || [];
+  return { done, total: subjects[subjectIdx].chapters.length, pct: Math.round((done.length / subjects[subjectIdx].chapters.length) * 100) };
 }
 
-function daysUntil(dateStr) {
-  const t = today();
-  const exam = new Date(dateStr + "T00:00:00");
-  return Math.ceil((exam - t) / (1000*60*60*24));
-}
-
-function formatDate(dateStr) {
-  const d = new Date(dateStr + "T00:00:00");
-  return `${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
-}
-
-function getDayName(dateStr) {
-  const d = new Date(dateStr + "T00:00:00");
-  return dayNames[d.getDay()];
-}
-
+// Render schedule
 function renderCalendar() {
   const cal = document.getElementById("calendar");
   cal.innerHTML = "";
-
-  exams.forEach((exam, i) => {
+  subjects.forEach((exam, i) => {
     const days = daysUntil(exam.date);
-    let statusClass, statusText;
-
-    if (days < 0) {
-      statusClass = "done";
-      statusText = "✅ Done";
-    } else if (days === 0) {
-      statusClass = "today";
-      statusText = "🔥 TODAY";
-    } else if (days <= 3) {
-      statusClass = "soon";
-      statusText = `${days} day${days > 1 ? 's' : ''} left`;
-    } else {
-      statusClass = "upcoming";
-      statusText = `${days} days left`;
-    }
-
-    const cardClass = days < 0 ? "past" : days === 0 ? "today-card" : "";
+    let badgeClass, badgeText;
+    if (days < 0) { badgeClass = "done"; badgeText = "✅ Done"; }
+    else if (days === 0) { badgeClass = "today"; badgeText = "🔥 TODAY"; }
+    else if (days <= 3) { badgeClass = "soon"; badgeText = `${days} day${days>1?'s':''} left`; }
+    else { badgeClass = "upcoming"; badgeText = `${days} days left`; }
+    const cardClass = days < 0 ? "past-card" : "";
+    const prog = getProgress(i);
 
     cal.innerHTML += `
-      <div class="exam-card ${cardClass}">
+      <div class="exam-card ${cardClass}" onclick="showSubject(${i})" style="--accent:${exam.color}">
         <div class="accent" style="background:${exam.color}"></div>
-        <div class="exam-num">Exam ${i+1} of ${exams.length}</div>
         <span class="emoji">${exam.emoji}</span>
         <div class="subject" style="color:${exam.color}">${exam.subject}</div>
         <div class="date">${formatDate(exam.date)}</div>
         <div class="day-name">${getDayName(exam.date)}</div>
-        <div class="days-left ${statusClass}">${statusText}</div>
-      </div>
-    `;
+        <div class="progress-bar"><div class="progress-fill" style="width:${prog.pct}%;background:${exam.color}"></div></div>
+        <div class="progress-text">${prog.done.length}/${prog.total} chapters done</div>
+        <div class="badge ${badgeClass}">${badgeText}</div>
+      </div>`;
   });
 }
 
+// Show subject detail
+function showSubject(idx) {
+  const s = subjects[idx];
+  const prog = loadProgress();
+  const done = prog[s.subject] || [];
+
+  document.getElementById("view-schedule").classList.remove("active");
+  document.getElementById("view-plan").classList.remove("active");
+  document.getElementById("tip").style.display = "none";
+  document.querySelector(".tabs").style.display = "none";
+  const sv = document.getElementById("subject-detail");
+  sv.classList.add("active");
+
+  const pct = Math.round((done.length / s.chapters.length) * 100);
+
+  let html = `
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="subject-header">
+      <span class="emoji">${s.emoji}</span>
+      <div>
+        <h2 style="color:${s.color}">${s.subject}</h2>
+        <div class="exam-date">${formatDate(s.date)} (${getDayName(s.date)}) · ${daysUntil(s.date) >= 0 ? daysUntil(s.date) + ' days left' : 'Exam done'}</div>
+      </div>
+    </div>
+    <div class="overall-progress">
+      <div class="bar"><div class="fill" style="width:${pct}%;background:${s.color}"></div></div>
+      <div class="text">${done.length} of ${s.chapters.length} chapters completed (${pct}%)</div>
+    </div>
+    <ul class="chapter-list">`;
+
+  s.chapters.forEach((ch, ci) => {
+    const isDone = done.includes(ci);
+    html += `
+      <li class="chapter-item ${isDone ? 'completed' : ''}" onclick="toggleChapter(${idx}, ${ci})">
+        <div class="checkbox">${isDone ? '✓' : ''}</div>
+        <span class="ch-num">Ch ${ci+1}</span>
+        <span class="ch-name">${ch}</span>
+      </li>`;
+  });
+
+  html += `</ul>`;
+  sv.innerHTML = html;
+}
+
+function toggleChapter(subjectIdx, chapterIdx) {
+  const p = loadProgress();
+  const key = subjects[subjectIdx].subject;
+  if (!p[key]) p[key] = [];
+  const i = p[key].indexOf(chapterIdx);
+  if (i >= 0) p[key].splice(i, 1);
+  else p[key].push(chapterIdx);
+  saveProgress(p);
+  showSubject(subjectIdx);
+}
+
+function goBack() {
+  document.getElementById("subject-detail").classList.remove("active");
+  document.getElementById("tip").style.display = "";
+  document.querySelector(".tabs").style.display = "flex";
+  const activeTab = document.querySelector(".tab.active").dataset.view;
+  document.getElementById("view-" + activeTab).classList.add("active");
+  renderCalendar();
+}
+
+// Generate study plan
+function generateStudyPlan() {
+  const container = document.getElementById("study-plan");
+  const startDate = new Date("2026-02-23T00:00:00"); // tomorrow
+  const plans = [];
+
+  // Distribute chapters across available days before each exam
+  subjects.forEach((s, si) => {
+    const examDate = toDateObj(s.date);
+    const chapCount = s.chapters.length;
+    // Study days = weekdays from startDate to 1 day before exam
+    let studyDays = [];
+    let d = new Date(startDate);
+    while (d < examDate) {
+      const dow = d.getDay();
+      if (dow !== 0 && dow !== 6) studyDays.push(new Date(d));
+      d.setDate(d.getDate() + 1);
+    }
+    // Spread chapters evenly
+    const perDay = Math.ceil(chapCount / studyDays.length);
+    let ci = 0;
+    studyDays.forEach(day => {
+      const dateStr = day.toISOString().slice(0, 10);
+      if (ci < chapCount) {
+        const batch = s.chapters.slice(ci, ci + perDay);
+        if (!plans[dateStr]) plans[dateStr] = [];
+        (plans[dateStr] = plans[dateStr] || []).push({ subject: s.subject, emoji: s.emoji, color: s.color, chapters: batch });
+        ci += perDay;
+      }
+    });
+  });
+
+  // Collect all dates and sort
+  // Actually rebuild as object
+  const planMap = {};
+  subjects.forEach((s, si) => {
+    const examDate = toDateObj(s.date);
+    const chapCount = s.chapters.length;
+    let studyDays = [];
+    let d = new Date(startDate);
+    while (d < examDate) {
+      const dow = d.getDay();
+      if (dow !== 0 && dow !== 6) studyDays.push(new Date(d));
+      d.setDate(d.getDate() + 1);
+    }
+    if (studyDays.length === 0) return;
+    const perDay = Math.max(1, Math.ceil(chapCount / studyDays.length));
+    let ci = 0;
+    studyDays.forEach(day => {
+      const dateStr = day.toISOString().slice(0, 10);
+      if (ci < chapCount) {
+        if (!planMap[dateStr]) planMap[dateStr] = [];
+        const batch = s.chapters.slice(ci, ci + perDay);
+        planMap[dateStr].push({ subject: s.subject, emoji: s.emoji, color: s.color, chapters: batch, examDate: s.date });
+        ci += perDay;
+      }
+    });
+  });
+
+  const dates = Object.keys(planMap).sort();
+  const t = today();
+  let html = "";
+
+  dates.forEach(dateStr => {
+    const d = toDateObj(dateStr);
+    const isToday = d.getTime() === t.getTime();
+    const isPast = d < t;
+    const isExamDay = subjects.some(s => s.date === dateStr);
+    let dayClass = isPast ? "past-day" : isToday ? "today-highlight" : "";
+    let tagHtml = "";
+    if (isToday) tagHtml = `<span class="day-tag" style="background:rgba(249,212,35,0.2);color:#f9d423">TODAY</span>`;
+    else if (isExamDay) tagHtml = `<span class="day-tag" style="background:rgba(255,78,80,0.2);color:#ff4e50">EXAM DAY</span>`;
+
+    html += `<div class="study-day ${dayClass}">
+      <div class="day-header">
+        <div>
+          <div class="day-title">${getDayName(dateStr)}, ${formatDate(dateStr)}</div>
+        </div>
+        ${tagHtml}
+      </div>
+      <ul class="tasks">`;
+
+    planMap[dateStr].forEach(task => {
+      const isExam = task.examDate === dateStr;
+      task.chapters.forEach(ch => {
+        html += `<li class="task"><span class="dot" style="background:${task.color}"></span>${task.emoji} <strong>${task.subject}</strong>: ${ch}${isExam ? ' 📝' : ''}</li>`;
+      });
+    });
+
+    html += `</ul></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// Tabs
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    document.getElementById("view-" + tab.dataset.view).classList.add("active");
+    document.getElementById("subject-detail").classList.remove("active");
+    document.getElementById("tip").style.display = "";
+    document.querySelector(".tabs").style.display = "flex";
+  });
+});
+
+// Countdown
 function updateCountdown() {
   const el = document.getElementById("countdown");
-  const firstExam = new Date("2026-03-17T00:00:00");
+  const lbl = document.getElementById("countdown-label");
+  const first = new Date("2026-03-17T00:00:00");
+  const last = new Date("2026-03-31T23:59:59");
   const now = new Date();
-  const diff = firstExam - now;
-
-  if (diff <= 0) {
-    // Check if all exams done
-    const lastExam = new Date("2026-03-31T23:59:59");
-    if (now > lastExam) {
-      el.textContent = "🎉 All exams done!";
-      el.classList.add("done");
-    } else {
-      el.textContent = "📝 Exams in progress!";
-      el.classList.add("done");
-    }
-    return;
-  }
-
-  const days = Math.floor(diff / (1000*60*60*24));
-  const hrs = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
-
-  el.textContent = `${days}d ${hrs}h ${mins}m`;
+  if (now > last) { el.textContent = "🎉 All exams done!"; lbl.textContent = ""; return; }
+  if (now >= first) { el.textContent = "📝 Exams in progress!"; lbl.textContent = "Stay focused!"; return; }
+  const diff = first - now;
+  const days = Math.floor(diff / 864e5);
+  const hrs = Math.floor((diff % 864e5) / 36e5);
+  el.textContent = `${days}d ${hrs}h`;
 }
 
 renderCalendar();
+generateStudyPlan();
 updateCountdown();
 setInterval(updateCountdown, 60000);
 </script>
