@@ -7,82 +7,128 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg1: #0f0c29; --bg2: #302b63; --bg3: #24243e;
+    --accent: #f9d423; --accent2: #ff4e50;
+    --glass: rgba(255,255,255,0.06); --glass-border: rgba(255,255,255,0.08);
+    --text-muted: #a9a9c8;
+  }
+
+  /* Themes */
+  body.theme-tennis { --bg1: #0a3d0a; --bg2: #1a5c1a; --bg3: #0d2e0d; --accent: #c8e620; --accent2: #4ade80; --text-muted: #8fbc8f; }
+  body.theme-basketball { --bg1: #2d1200; --bg2: #5c2e00; --bg3: #1a0a00; --accent: #ff8c00; --accent2: #ff4500; --text-muted: #d2a679; }
+  body.theme-violin { --bg1: #1a0a2e; --bg2: #3d1a6e; --bg3: #0f0520; --accent: #daa520; --accent2: #cd853f; --text-muted: #b39ddb; }
+  body.theme-singing { --bg1: #1a0020; --bg2: #4a0066; --bg3: #0d0015; --accent: #ff69b4; --accent2: #da70d6; --text-muted: #ce93d8; }
+
   body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    min-height: 100vh;
-    color: #fff;
-    padding: 16px;
-    padding-bottom: 100px;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+    min-height: 100vh; color: #fff; padding: 16px; padding-bottom: 100px;
+    transition: background 0.5s;
   }
+
   .header { text-align: center; padding: 24px 0 8px; }
   .header h1 {
     font-size: 1.8rem; font-weight: 800;
-    background: linear-gradient(90deg, #f9d423, #ff4e50);
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .header p { color: #a9a9c8; margin-top: 4px; font-size: 0.9rem; }
+  .header p { color: var(--text-muted); margin-top: 4px; font-size: 0.9rem; }
+
+  /* Theme Switcher */
+  .theme-switcher {
+    display: flex; justify-content: center; gap: 8px; margin: 12px auto; flex-wrap: wrap;
+  }
+  .theme-btn {
+    width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15);
+    cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.08); transition: all 0.2s;
+  }
+  .theme-btn:hover { transform: scale(1.15); border-color: rgba(255,255,255,0.4); }
+  .theme-btn.active { border-color: var(--accent); box-shadow: 0 0 12px rgba(255,255,255,0.2); transform: scale(1.1); }
 
   /* Tabs */
-  .tabs {
-    display: flex; justify-content: center; gap: 8px;
-    margin: 20px auto; flex-wrap: wrap; max-width: 700px;
-  }
+  .tabs { display: flex; justify-content: center; gap: 8px; margin: 16px auto; flex-wrap: wrap; max-width: 800px; }
   .tab {
     padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
     cursor: pointer; border: 2px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.05); color: #a9a9c8;
-    transition: all 0.2s;
+    background: rgba(255,255,255,0.05); color: var(--text-muted); transition: all 0.2s;
   }
   .tab:hover { border-color: rgba(255,255,255,0.3); }
   .tab.active { border-color: var(--accent); color: #fff; background: rgba(255,255,255,0.1); }
 
   /* Countdown */
   .countdown-banner {
-    text-align: center; margin: 16px auto; padding: 14px 20px;
-    background: rgba(255,255,255,0.07); border-radius: 14px;
-    max-width: 500px; backdrop-filter: blur(10px);
+    text-align: center; margin: 14px auto; padding: 14px 20px;
+    background: var(--glass); border-radius: 14px; max-width: 500px; backdrop-filter: blur(10px);
   }
-  .countdown-banner .label { font-size: 0.8rem; color: #a9a9c8; text-transform: uppercase; letter-spacing: 1px; }
-  .countdown-banner .time { font-size: 1.8rem; font-weight: 800; color: #f9d423; margin-top: 2px; }
+  .countdown-banner .label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .countdown-banner .time { font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-top: 2px; }
 
-  /* Schedule View */
+  /* Views */
   .view { display: none; max-width: 800px; margin: 0 auto; }
   .view.active { display: block; }
 
   /* Exam Cards */
   .calendar { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 20px 0; }
   .exam-card {
-    background: rgba(255,255,255,0.06); border-radius: 14px; padding: 20px;
-    backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08);
+    background: var(--glass); border-radius: 14px; padding: 20px;
+    backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
     cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
     position: relative; overflow: hidden;
   }
   .exam-card:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(0,0,0,0.3); }
-  .exam-card .accent { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+  .exam-card .accent-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
   .exam-card .emoji { font-size: 1.8rem; margin-bottom: 6px; display: block; }
   .exam-card .subject { font-size: 1.3rem; font-weight: 700; }
   .exam-card .date { margin-top: 8px; font-size: 0.9rem; color: #c4b5fd; font-weight: 600; }
-  .exam-card .day-name { font-size: 0.8rem; color: #a9a9c8; }
+  .exam-card .day-name { font-size: 0.8rem; color: var(--text-muted); }
   .exam-card .progress-bar { margin-top: 12px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
   .exam-card .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
-  .exam-card .progress-text { font-size: 0.75rem; color: #a9a9c8; margin-top: 4px; }
-  .exam-card .badge {
-    margin-top: 10px; font-size: 0.8rem; padding: 3px 10px;
-    border-radius: 16px; display: inline-block; font-weight: 600;
-  }
-  .badge.upcoming { background: rgba(249,212,35,0.15); color: #f9d423; }
+  .exam-card .progress-text { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+  .exam-card .badge { margin-top: 10px; font-size: 0.8rem; padding: 3px 10px; border-radius: 16px; display: inline-block; font-weight: 600; }
+  .badge.upcoming { background: rgba(249,212,35,0.15); color: var(--accent); }
   .badge.soon { background: rgba(255,78,80,0.15); color: #ff4e50; }
   .badge.today { background: rgba(74,222,128,0.2); color: #4ade80; }
   .badge.done { background: rgba(148,148,180,0.15); color: #9494b4; }
   .exam-card.past-card { opacity: 0.5; }
 
-  /* Subject Detail View */
+  /* Marks Section */
+  .marks-section { max-width: 700px; margin: 0 auto; }
+  .marks-summary {
+    display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .marks-total {
+    text-align: center; padding: 20px 30px; background: var(--glass); border-radius: 16px;
+    backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
+  }
+  .marks-total .big-num { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+  .marks-total .big-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+  .marks-total .big-pct { font-size: 1.1rem; font-weight: 700; color: #4ade80; margin-top: 4px; }
+  .marks-grade { text-align: center; padding: 20px 30px; background: var(--glass); border-radius: 16px; }
+  .marks-grade .grade-letter { font-size: 2.5rem; font-weight: 800; color: #4ade80; }
+  .marks-grade .grade-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+  .marks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .mark-card {
+    background: var(--glass); border-radius: 14px; padding: 18px 20px;
+    border: 1px solid var(--glass-border); position: relative; overflow: hidden;
+  }
+  .mark-card .accent-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+  .mark-card .mark-top { display: flex; justify-content: space-between; align-items: center; }
+  .mark-card .mark-subject { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .mark-card .mark-score { font-size: 1.4rem; font-weight: 800; }
+  .mark-card .mark-bar { margin-top: 10px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+  .mark-card .mark-fill { height: 100%; border-radius: 4px; transition: width 0.8s ease-out; }
+  .mark-card .mark-pct { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; text-align: right; }
+
+  /* Subject Detail */
   .subject-view { display: none; max-width: 700px; margin: 0 auto; }
   .subject-view.active { display: block; }
   .back-btn {
     display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
-    background: rgba(255,255,255,0.08); border: none; color: #a9a9c8;
+    background: rgba(255,255,255,0.08); border: none; color: var(--text-muted);
     border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-family: inherit;
     margin-bottom: 16px; transition: background 0.2s;
   }
@@ -94,8 +140,7 @@
   .overall-progress { margin-bottom: 24px; }
   .overall-progress .bar { height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
   .overall-progress .fill { height: 100%; border-radius: 5px; transition: width 0.3s; }
-  .overall-progress .text { font-size: 0.85rem; color: #a9a9c8; margin-top: 6px; }
-
+  .overall-progress .text { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
   .chapter-list { list-style: none; }
   .chapter-item {
     display: flex; align-items: center; gap: 12px; padding: 14px 16px;
@@ -112,62 +157,85 @@
     transition: all 0.2s; font-size: 0.8rem;
   }
   .chapter-item.completed .checkbox { border-color: #4ade80; background: #4ade80; color: #000; }
-  .ch-num { font-size: 0.75rem; color: #a9a9c8; min-width: 28px; }
+  .ch-num { font-size: 0.75rem; color: var(--text-muted); min-width: 28px; }
   .ch-name { font-size: 0.95rem; font-weight: 500; flex: 1; }
 
-  /* Study Plan View */
+  /* Study Plan */
   .study-day {
     background: rgba(255,255,255,0.05); border-radius: 14px; padding: 16px 20px;
     margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.06);
   }
-  .study-day.today-highlight { border: 1px solid #f9d423; background: rgba(249,212,35,0.05); }
+  .study-day.today-highlight { border: 1px solid var(--accent); background: rgba(249,212,35,0.05); }
   .study-day.past-day { opacity: 0.4; }
-  .study-day .day-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-  }
+  .study-day .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .study-day .day-title { font-weight: 700; font-size: 1rem; }
-  .study-day .day-date { font-size: 0.8rem; color: #a9a9c8; }
-  .study-day .day-tag {
-    font-size: 0.7rem; padding: 2px 8px; border-radius: 10px;
-    font-weight: 600;
-  }
+  .study-day .day-tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
   .study-day .tasks { list-style: none; }
-  .study-day .task {
-    display: flex; align-items: center; gap: 8px; padding: 6px 0;
-    font-size: 0.9rem; color: #d1d1e0;
-  }
+  .study-day .task { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 0.9rem; color: #d1d1e0; }
   .study-day .task .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  .tip { text-align: center; margin: 24px auto; padding: 16px; max-width: 500px; color: #a9a9c8; font-size: 0.85rem; line-height: 1.6; }
-  .tip strong { color: #f9d423; }
+  .tip { text-align: center; margin: 24px auto; padding: 16px; max-width: 500px; color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
+  .tip strong { color: var(--accent); }
+
+  /* Floating particles for themes */
+  .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+  .particle {
+    position: absolute; font-size: 1.5rem; opacity: 0.15; animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.15; }
+    90% { opacity: 0.15; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+  body > *:not(.particles) { position: relative; z-index: 1; }
 
   @media (max-width: 600px) {
     .header h1 { font-size: 1.4rem; }
-    .calendar { grid-template-columns: 1fr; }
+    .calendar, .marks-grid { grid-template-columns: 1fr; }
     .tabs { gap: 6px; }
     .tab { padding: 6px 12px; font-size: 0.8rem; }
+    .marks-total .big-num, .marks-grade .grade-letter { font-size: 2rem; }
   }
 </style>
 </head>
 <body>
 
+<div class="particles" id="particles"></div>
+
 <div class="header">
   <h1>📚 Rithvik's Exam Planner</h1>
-  <p>Class 5 CBSE &middot; Final Exams &middot; March 2026</p>
+  <p>Class 5 CBSE &middot; NPS Bangalore &middot; 2025-26</p>
+</div>
+
+<div class="theme-switcher">
+  <div class="theme-btn active" data-theme="default" title="Default">🌙</div>
+  <div class="theme-btn" data-theme="tennis" title="Tennis">🎾</div>
+  <div class="theme-btn" data-theme="basketball" title="Basketball">🏀</div>
+  <div class="theme-btn" data-theme="violin" title="Violin">🎻</div>
+  <div class="theme-btn" data-theme="singing" title="Singing">🎤</div>
 </div>
 
 <div class="countdown-banner">
-  <div class="label" id="countdown-label">Exams begin in</div>
+  <div class="label" id="countdown-label">Final exams begin in</div>
   <div class="time" id="countdown"></div>
 </div>
 
 <div class="tabs">
-  <div class="tab active" data-view="schedule" style="--accent:#f9d423">📅 Schedule</div>
-  <div class="tab" data-view="plan" style="--accent:#6366f1">📖 Study Plan</div>
+  <div class="tab active" data-view="schedule">📅 Schedule</div>
+  <div class="tab" data-view="marks">🏆 Semester Marks</div>
+  <div class="tab" data-view="plan">📖 Study Plan</div>
 </div>
 
 <div class="view active" id="view-schedule">
   <div class="calendar" id="calendar"></div>
+</div>
+
+<div class="view" id="view-marks">
+  <div class="marks-section">
+    <div class="marks-summary" id="marks-summary"></div>
+    <div class="marks-grid" id="marks-grid"></div>
+  </div>
 </div>
 
 <div class="view" id="view-plan">
@@ -182,6 +250,7 @@
 </div>
 
 <script>
+// ── Data ──
 const subjects = [
   {
     subject: "English", date: "2026-03-17", emoji: "📖", color: "#6366f1",
@@ -193,7 +262,7 @@ const subjects = [
     ]
   },
   {
-    subject: "Social", date: "2026-03-19", emoji: "🌍", color: "#f59e0b",
+    subject: "Social Science", date: "2026-03-19", emoji: "🌍", color: "#f59e0b",
     chapters: [
       "Super Senses", "A Snake Charmer's Story", "From Tasting to Digesting",
       "Mangoes Round the Year", "Seeds and Seeds", "Every Drop Counts",
@@ -236,7 +305,7 @@ const subjects = [
     ]
   },
   {
-    subject: "Science", date: "2026-03-31", emoji: "🔬", color: "#06b6d4",
+    subject: "General Science", date: "2026-03-31", emoji: "🔬", color: "#06b6d4",
     chapters: [
       "Super Senses", "A Snake Charmer's Story",
       "From Tasting to Digesting", "Mangoes Round the Year",
@@ -248,72 +317,154 @@ const subjects = [
   }
 ];
 
+const semesterMarks = [
+  { subject: "Maths", emoji: "🔢", color: "#ef4444", scored: 45, total: 50 },
+  { subject: "English", emoji: "📖", color: "#6366f1", scored: 46, total: 50 },
+  { subject: "Sanskrit", emoji: "📜", color: "#8b5cf6", scored: 49, total: 50 },
+  { subject: "General Science", emoji: "🔬", color: "#06b6d4", scored: 45, total: 50 },
+  { subject: "Social Science", emoji: "🌍", color: "#f59e0b", scored: 46.5, total: 50 },
+  { subject: "Kannada", emoji: "✍️", color: "#10b981", scored: 49, total: 50 },
+];
+
+const themes = {
+  default:    { emoji: "🌙", particles: ["✨","⭐","🌟","💫"] },
+  tennis:     { emoji: "🎾", particles: ["🎾","🏆","💚","🌿"] },
+  basketball: { emoji: "🏀", particles: ["🏀","🔥","⛹️","🏆"] },
+  violin:     { emoji: "🎻", particles: ["🎻","🎵","🎶","♪"] },
+  singing:    { emoji: "🎤", particles: ["🎤","🎵","🎶","🎼"] },
+};
+
+// ── Helpers ──
 const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const STORAGE_KEY = "rithvik_exams_progress";
+const THEME_KEY = "rithvik_theme";
 
-// Load/save progress
-function loadProgress() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
-}
+function loadProgress() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
 function saveProgress(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
-
 function today() { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
 function toDateObj(s) { return new Date(s + "T00:00:00"); }
 function daysUntil(s) { return Math.ceil((toDateObj(s) - today()) / 864e5); }
 function formatDate(s) { const d = toDateObj(s); return `${d.getDate()} ${monthNames[d.getMonth()]}`; }
 function getDayName(s) { return dayNames[toDateObj(s).getDay()]; }
-
-function getProgress(subjectIdx) {
-  const p = loadProgress();
-  const key = subjects[subjectIdx].subject;
-  const done = p[key] || [];
-  return { done, total: subjects[subjectIdx].chapters.length, pct: Math.round((done.length / subjects[subjectIdx].chapters.length) * 100) };
+function getProgress(i) {
+  const p = loadProgress(), key = subjects[i].subject, done = p[key] || [];
+  return { done, total: subjects[i].chapters.length, pct: Math.round((done.length / subjects[i].chapters.length) * 100) };
 }
 
-// Render schedule
+// ── Themes ──
+let currentTheme = localStorage.getItem(THEME_KEY) || "default";
+
+function applyTheme(t) {
+  currentTheme = t;
+  localStorage.setItem(THEME_KEY, t);
+  document.body.className = t === "default" ? "" : `theme-${t}`;
+  document.querySelectorAll(".theme-btn").forEach(b => b.classList.toggle("active", b.dataset.theme === t));
+  renderParticles();
+}
+
+function renderParticles() {
+  const c = document.getElementById("particles");
+  c.innerHTML = "";
+  const emojis = themes[currentTheme].particles;
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    p.style.left = Math.random() * 100 + "%";
+    p.style.animationDuration = (12 + Math.random() * 18) + "s";
+    p.style.animationDelay = (Math.random() * 15) + "s";
+    p.style.fontSize = (1 + Math.random() * 1.5) + "rem";
+    c.appendChild(p);
+  }
+}
+
+document.querySelectorAll(".theme-btn").forEach(b => {
+  b.addEventListener("click", () => applyTheme(b.dataset.theme));
+});
+
+// ── Schedule ──
 function renderCalendar() {
   const cal = document.getElementById("calendar");
   cal.innerHTML = "";
   subjects.forEach((exam, i) => {
     const days = daysUntil(exam.date);
-    let badgeClass, badgeText;
-    if (days < 0) { badgeClass = "done"; badgeText = "✅ Done"; }
-    else if (days === 0) { badgeClass = "today"; badgeText = "🔥 TODAY"; }
-    else if (days <= 3) { badgeClass = "soon"; badgeText = `${days} day${days>1?'s':''} left`; }
-    else { badgeClass = "upcoming"; badgeText = `${days} days left`; }
-    const cardClass = days < 0 ? "past-card" : "";
+    let bc, bt;
+    if (days < 0) { bc = "done"; bt = "✅ Done"; }
+    else if (days === 0) { bc = "today"; bt = "🔥 TODAY"; }
+    else if (days <= 3) { bc = "soon"; bt = `${days} day${days>1?'s':''} left`; }
+    else { bc = "upcoming"; bt = `${days} days left`; }
     const prog = getProgress(i);
-
     cal.innerHTML += `
-      <div class="exam-card ${cardClass}" onclick="showSubject(${i})" style="--accent:${exam.color}">
-        <div class="accent" style="background:${exam.color}"></div>
+      <div class="exam-card ${days<0?'past-card':''}" onclick="showSubject(${i})">
+        <div class="accent-bar" style="background:${exam.color}"></div>
         <span class="emoji">${exam.emoji}</span>
         <div class="subject" style="color:${exam.color}">${exam.subject}</div>
         <div class="date">${formatDate(exam.date)}</div>
         <div class="day-name">${getDayName(exam.date)}</div>
         <div class="progress-bar"><div class="progress-fill" style="width:${prog.pct}%;background:${exam.color}"></div></div>
         <div class="progress-text">${prog.done.length}/${prog.total} chapters done</div>
-        <div class="badge ${badgeClass}">${badgeText}</div>
+        <div class="badge ${bc}">${bt}</div>
       </div>`;
   });
 }
 
-// Show subject detail
-function showSubject(idx) {
-  const s = subjects[idx];
-  const prog = loadProgress();
-  const done = prog[s.subject] || [];
+// ── Marks ──
+function renderMarks() {
+  const totalScored = semesterMarks.reduce((s, m) => s + m.scored, 0);
+  const totalMax = semesterMarks.reduce((s, m) => s + m.total, 0);
+  const pct = ((totalScored / totalMax) * 100).toFixed(1);
+  let grade;
+  if (pct >= 90) grade = "A+";
+  else if (pct >= 80) grade = "A";
+  else if (pct >= 70) grade = "B+";
+  else grade = "B";
 
-  document.getElementById("view-schedule").classList.remove("active");
-  document.getElementById("view-plan").classList.remove("active");
+  document.getElementById("marks-summary").innerHTML = `
+    <div class="marks-total">
+      <div class="big-num">${totalScored}/${totalMax}</div>
+      <div class="big-label">Total Score</div>
+      <div class="big-pct">${pct}%</div>
+    </div>
+    <div class="marks-grade">
+      <div class="grade-letter">${grade}</div>
+      <div class="grade-label">Overall Grade</div>
+      <div class="big-pct" style="color:var(--accent)">Semester Review</div>
+    </div>`;
+
+  const grid = document.getElementById("marks-grid");
+  grid.innerHTML = "";
+  // Sort by score desc
+  const sorted = [...semesterMarks].sort((a, b) => (b.scored/b.total) - (a.scored/a.total));
+  sorted.forEach((m, i) => {
+    const p = ((m.scored / m.total) * 100).toFixed(1);
+    const medal = i === 0 ? " 🥇" : i === 1 ? " 🥈" : i === 2 ? " 🥉" : "";
+    grid.innerHTML += `
+      <div class="mark-card">
+        <div class="accent-bar" style="background:${m.color}"></div>
+        <div class="mark-top">
+          <div class="mark-subject">${m.emoji} ${m.subject}${medal}</div>
+          <div class="mark-score" style="color:${m.color}">${m.scored}/${m.total}</div>
+        </div>
+        <div class="mark-bar"><div class="mark-fill" style="width:${p}%;background:${m.color}"></div></div>
+        <div class="mark-pct">${p}%</div>
+      </div>`;
+  });
+  // Animate bars
+  setTimeout(() => {
+    grid.querySelectorAll(".mark-fill").forEach(f => { f.style.width = f.style.width; });
+  }, 100);
+}
+
+// ── Subject Detail ──
+function showSubject(idx) {
+  const s = subjects[idx], prog = loadProgress(), done = prog[s.subject] || [];
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
   document.getElementById("tip").style.display = "none";
   document.querySelector(".tabs").style.display = "none";
   const sv = document.getElementById("subject-detail");
   sv.classList.add("active");
-
   const pct = Math.round((done.length / s.chapters.length) * 100);
-
   let html = `
     <button class="back-btn" onclick="goBack()">← Back</button>
     <div class="subject-header">
@@ -328,137 +479,80 @@ function showSubject(idx) {
       <div class="text">${done.length} of ${s.chapters.length} chapters completed (${pct}%)</div>
     </div>
     <ul class="chapter-list">`;
-
   s.chapters.forEach((ch, ci) => {
     const isDone = done.includes(ci);
-    html += `
-      <li class="chapter-item ${isDone ? 'completed' : ''}" onclick="toggleChapter(${idx}, ${ci})">
-        <div class="checkbox">${isDone ? '✓' : ''}</div>
-        <span class="ch-num">Ch ${ci+1}</span>
-        <span class="ch-name">${ch}</span>
-      </li>`;
+    html += `<li class="chapter-item ${isDone?'completed':''}" onclick="toggleChapter(${idx},${ci})">
+      <div class="checkbox">${isDone?'✓':''}</div>
+      <span class="ch-num">Ch ${ci+1}</span>
+      <span class="ch-name">${ch}</span></li>`;
   });
-
-  html += `</ul>`;
-  sv.innerHTML = html;
+  sv.innerHTML = html + `</ul>`;
 }
 
-function toggleChapter(subjectIdx, chapterIdx) {
-  const p = loadProgress();
-  const key = subjects[subjectIdx].subject;
+function toggleChapter(si, ci) {
+  const p = loadProgress(), key = subjects[si].subject;
   if (!p[key]) p[key] = [];
-  const i = p[key].indexOf(chapterIdx);
-  if (i >= 0) p[key].splice(i, 1);
-  else p[key].push(chapterIdx);
+  const i = p[key].indexOf(ci);
+  if (i >= 0) p[key].splice(i, 1); else p[key].push(ci);
   saveProgress(p);
-  showSubject(subjectIdx);
+  showSubject(si);
 }
 
 function goBack() {
   document.getElementById("subject-detail").classList.remove("active");
   document.getElementById("tip").style.display = "";
   document.querySelector(".tabs").style.display = "flex";
-  const activeTab = document.querySelector(".tab.active").dataset.view;
-  document.getElementById("view-" + activeTab).classList.add("active");
+  const active = document.querySelector(".tab.active").dataset.view;
+  document.getElementById("view-" + active).classList.add("active");
   renderCalendar();
 }
 
-// Generate study plan
+// ── Study Plan ──
 function generateStudyPlan() {
   const container = document.getElementById("study-plan");
-  const startDate = new Date("2026-02-23T00:00:00"); // tomorrow
-  const plans = [];
-
-  // Distribute chapters across available days before each exam
-  subjects.forEach((s, si) => {
-    const examDate = toDateObj(s.date);
-    const chapCount = s.chapters.length;
-    // Study days = weekdays from startDate to 1 day before exam
-    let studyDays = [];
-    let d = new Date(startDate);
-    while (d < examDate) {
-      const dow = d.getDay();
-      if (dow !== 0 && dow !== 6) studyDays.push(new Date(d));
-      d.setDate(d.getDate() + 1);
-    }
-    // Spread chapters evenly
-    const perDay = Math.ceil(chapCount / studyDays.length);
-    let ci = 0;
-    studyDays.forEach(day => {
-      const dateStr = day.toISOString().slice(0, 10);
-      if (ci < chapCount) {
-        const batch = s.chapters.slice(ci, ci + perDay);
-        if (!plans[dateStr]) plans[dateStr] = [];
-        (plans[dateStr] = plans[dateStr] || []).push({ subject: s.subject, emoji: s.emoji, color: s.color, chapters: batch });
-        ci += perDay;
-      }
-    });
-  });
-
-  // Collect all dates and sort
-  // Actually rebuild as object
+  const startDate = new Date("2026-02-23T00:00:00");
   const planMap = {};
-  subjects.forEach((s, si) => {
-    const examDate = toDateObj(s.date);
-    const chapCount = s.chapters.length;
-    let studyDays = [];
-    let d = new Date(startDate);
+  subjects.forEach(s => {
+    const examDate = toDateObj(s.date), chapCount = s.chapters.length;
+    let studyDays = [], d = new Date(startDate);
     while (d < examDate) {
       const dow = d.getDay();
       if (dow !== 0 && dow !== 6) studyDays.push(new Date(d));
       d.setDate(d.getDate() + 1);
     }
-    if (studyDays.length === 0) return;
+    if (!studyDays.length) return;
     const perDay = Math.max(1, Math.ceil(chapCount / studyDays.length));
     let ci = 0;
     studyDays.forEach(day => {
-      const dateStr = day.toISOString().slice(0, 10);
+      const ds = day.toISOString().slice(0, 10);
       if (ci < chapCount) {
-        if (!planMap[dateStr]) planMap[dateStr] = [];
-        const batch = s.chapters.slice(ci, ci + perDay);
-        planMap[dateStr].push({ subject: s.subject, emoji: s.emoji, color: s.color, chapters: batch, examDate: s.date });
+        if (!planMap[ds]) planMap[ds] = [];
+        planMap[ds].push({ subject: s.subject, emoji: s.emoji, color: s.color, chapters: s.chapters.slice(ci, ci + perDay), examDate: s.date });
         ci += perDay;
       }
     });
   });
-
-  const dates = Object.keys(planMap).sort();
-  const t = today();
+  const dates = Object.keys(planMap).sort(), t = today();
   let html = "";
-
-  dates.forEach(dateStr => {
-    const d = toDateObj(dateStr);
-    const isToday = d.getTime() === t.getTime();
-    const isPast = d < t;
-    const isExamDay = subjects.some(s => s.date === dateStr);
-    let dayClass = isPast ? "past-day" : isToday ? "today-highlight" : "";
-    let tagHtml = "";
-    if (isToday) tagHtml = `<span class="day-tag" style="background:rgba(249,212,35,0.2);color:#f9d423">TODAY</span>`;
-    else if (isExamDay) tagHtml = `<span class="day-tag" style="background:rgba(255,78,80,0.2);color:#ff4e50">EXAM DAY</span>`;
-
-    html += `<div class="study-day ${dayClass}">
-      <div class="day-header">
-        <div>
-          <div class="day-title">${getDayName(dateStr)}, ${formatDate(dateStr)}</div>
-        </div>
-        ${tagHtml}
-      </div>
-      <ul class="tasks">`;
-
-    planMap[dateStr].forEach(task => {
-      const isExam = task.examDate === dateStr;
+  dates.forEach(ds => {
+    const d = toDateObj(ds), isToday = d.getTime() === t.getTime(), isPast = d < t;
+    const isExam = subjects.some(s => s.date === ds);
+    let cls = isPast ? "past-day" : isToday ? "today-highlight" : "";
+    let tag = "";
+    if (isToday) tag = `<span class="day-tag" style="background:rgba(249,212,35,0.2);color:var(--accent)">TODAY</span>`;
+    else if (isExam) tag = `<span class="day-tag" style="background:rgba(255,78,80,0.2);color:#ff4e50">EXAM DAY</span>`;
+    html += `<div class="study-day ${cls}"><div class="day-header"><div class="day-title">${getDayName(ds)}, ${formatDate(ds)}</div>${tag}</div><ul class="tasks">`;
+    planMap[ds].forEach(task => {
       task.chapters.forEach(ch => {
-        html += `<li class="task"><span class="dot" style="background:${task.color}"></span>${task.emoji} <strong>${task.subject}</strong>: ${ch}${isExam ? ' 📝' : ''}</li>`;
+        html += `<li class="task"><span class="dot" style="background:${task.color}"></span>${task.emoji} <strong>${task.subject}</strong>: ${ch}${task.examDate === ds ? ' 📝' : ''}</li>`;
       });
     });
-
     html += `</ul></div>`;
   });
-
   container.innerHTML = html;
 }
 
-// Tabs
+// ── Tabs ──
 document.querySelectorAll(".tab").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -471,22 +565,20 @@ document.querySelectorAll(".tab").forEach(tab => {
   });
 });
 
-// Countdown
+// ── Countdown ──
 function updateCountdown() {
-  const el = document.getElementById("countdown");
-  const lbl = document.getElementById("countdown-label");
-  const first = new Date("2026-03-17T00:00:00");
-  const last = new Date("2026-03-31T23:59:59");
-  const now = new Date();
+  const el = document.getElementById("countdown"), lbl = document.getElementById("countdown-label");
+  const first = new Date("2026-03-17T00:00:00"), last = new Date("2026-03-31T23:59:59"), now = new Date();
   if (now > last) { el.textContent = "🎉 All exams done!"; lbl.textContent = ""; return; }
   if (now >= first) { el.textContent = "📝 Exams in progress!"; lbl.textContent = "Stay focused!"; return; }
   const diff = first - now;
-  const days = Math.floor(diff / 864e5);
-  const hrs = Math.floor((diff % 864e5) / 36e5);
-  el.textContent = `${days}d ${hrs}h`;
+  el.textContent = `${Math.floor(diff/864e5)}d ${Math.floor((diff%864e5)/36e5)}h`;
 }
 
+// ── Init ──
+applyTheme(currentTheme);
 renderCalendar();
+renderMarks();
 generateStudyPlan();
 updateCountdown();
 setInterval(updateCountdown, 60000);
