@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rithvik's Tennis Progress 🎾</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --bg1:#0a3d0a; --bg2:#1a5c1a; --bg3:#0d2e0d;
+    --accent:#c8e620; --accent2:#4ade80;
+    --glass:rgba(255,255,255,0.06); --glass-border:rgba(255,255,255,0.08);
+    --muted:#8fbc8f;
+  }
+
+  body {
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+    min-height:100vh; color:#fff; padding:16px; padding-bottom:100px;
+  }
+
+  /* Particles */
+  .particles { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
+  .particle { position:absolute; opacity:0.12; animation:floatUp linear infinite; }
+  @keyframes floatUp {
+    0% { transform:translateY(100vh) rotate(0deg); opacity:0; }
+    10% { opacity:0.12; } 90% { opacity:0.12; }
+    100% { transform:translateY(-10vh) rotate(360deg); opacity:0; }
+  }
+  body > *:not(.particles) { position:relative; z-index:1; }
+
+  .header { text-align:center; padding:24px 0 8px; }
+  .header h1 {
+    font-size:1.8rem; font-weight:800;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .header p { color:var(--muted); margin-top:4px; font-size:0.9rem; }
+  .header .level-badge {
+    display:inline-block; margin-top:10px; padding:6px 20px; border-radius:20px;
+    background:rgba(74,222,128,0.15); border:1px solid rgba(74,222,128,0.3);
+    font-size:0.85rem; font-weight:700; color:#4ade80;
+  }
+
+  /* Overall Rating */
+  .overall-section {
+    max-width:500px; margin:24px auto; text-align:center;
+    background:var(--glass); border-radius:16px; padding:24px;
+    border:1px solid var(--glass-border); backdrop-filter:blur(10px);
+  }
+  .overall-section .big-rating { font-size:3rem; font-weight:800; color:var(--accent); }
+  .overall-section .rating-label { font-size:0.85rem; color:var(--muted); margin-top:2px; }
+  .overall-section .stars { font-size:1.5rem; color:#f9d423; letter-spacing:4px; margin-top:6px; }
+
+  /* Radar Chart */
+  .radar-section { max-width:500px; margin:24px auto; text-align:center; }
+  .radar-section h2 { font-size:1.1rem; font-weight:700; color:var(--accent); margin-bottom:12px; }
+  canvas { max-width:100%; }
+
+  /* Tabs */
+  .tabs { display:flex; justify-content:center; gap:6px; margin:20px auto; flex-wrap:wrap; max-width:700px; }
+  .tab {
+    padding:8px 14px; border-radius:20px; font-size:0.82rem; font-weight:600;
+    cursor:pointer; border:2px solid rgba(255,255,255,0.1);
+    background:rgba(255,255,255,0.05); color:var(--muted); transition:all 0.2s;
+  }
+  .tab:hover { border-color:rgba(255,255,255,0.3); }
+  .tab.active { border-color:var(--accent); color:#fff; background:rgba(255,255,255,0.1); }
+
+  /* Sections */
+  .section { display:none; max-width:750px; margin:0 auto; }
+  .section.active { display:block; }
+  .section-title { font-size:1.1rem; font-weight:700; color:var(--accent); margin:20px 0 14px; text-align:center; }
+
+  /* Skill Cards */
+  .skills-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .skill-card {
+    background:var(--glass); border-radius:14px; padding:16px 18px;
+    border:1px solid var(--glass-border); transition:transform 0.2s;
+  }
+  .skill-card:hover { transform:translateY(-2px); }
+  .skill-card .skill-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .skill-card .skill-name { font-size:0.95rem; font-weight:700; display:flex; align-items:center; gap:6px; }
+  .skill-card .skill-rating { font-size:1.3rem; font-weight:800; color:var(--accent); }
+  .skill-card .skill-bar { height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; }
+  .skill-card .skill-fill { height:100%; border-radius:4px; transition:width 1s ease-out; }
+  .skill-card .skill-bottom { display:flex; justify-content:space-between; margin-top:6px; }
+  .skill-card .skill-pct { font-size:0.75rem; color:var(--muted); }
+  .skill-card .skill-level {
+    font-size:0.7rem; padding:2px 8px; border-radius:10px; font-weight:600;
+  }
+  .level-advanced { background:rgba(74,222,128,0.2); color:#4ade80; }
+  .level-intermediate { background:rgba(249,212,35,0.15); color:#f9d423; }
+  .level-beginner { background:rgba(255,78,80,0.15); color:#ff4e50; }
+
+  /* Editable Ratings */
+  .rating-slider {
+    -webkit-appearance:none; width:100%; height:6px; border-radius:3px;
+    background:rgba(255,255,255,0.1); outline:none; margin-top:8px;
+  }
+  .rating-slider::-webkit-slider-thumb {
+    -webkit-appearance:none; width:20px; height:20px; border-radius:50%;
+    background:var(--accent); cursor:pointer; border:2px solid #fff;
+  }
+
+  /* Match Stats */
+  .stats-row { display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin:16px 0; }
+  .stat-card {
+    text-align:center; padding:16px 24px; background:var(--glass); border-radius:14px;
+    border:1px solid var(--glass-border); min-width:120px; flex:1;
+  }
+  .stat-card .stat-num { font-size:2rem; font-weight:800; color:var(--accent); }
+  .stat-card .stat-label { font-size:0.8rem; color:var(--muted); margin-top:2px; }
+
+  /* Coach Feedback */
+  .coach-section { max-width:650px; margin:20px auto; }
+  .coach-card {
+    background:var(--glass); border-radius:16px; padding:20px 24px;
+    border:1px solid var(--glass-border); margin-bottom:12px;
+  }
+  .coach-card .coach-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .coach-card .coach-avatar { width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+  .coach-card .coach-name { font-weight:700; font-size:0.95rem; }
+  .coach-card .coach-date { font-size:0.8rem; color:var(--muted); }
+  .coach-card .coach-text { font-size:0.9rem; line-height:1.6; color:#d1d1e0; }
+  .feedback-input {
+    width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px; padding:14px 16px; color:#fff; font-family:inherit;
+    font-size:0.9rem; resize:vertical; min-height:80px; margin-top:8px;
+  }
+  .feedback-input::placeholder { color:rgba(255,255,255,0.3); }
+  .feedback-input:focus { outline:none; border-color:var(--accent); }
+  .btn {
+    display:inline-block; padding:10px 24px; border-radius:12px; border:none;
+    background:var(--accent); color:#000; font-weight:700; font-size:0.9rem;
+    cursor:pointer; font-family:inherit; margin-top:10px; transition:transform 0.2s;
+  }
+  .btn:hover { transform:scale(1.03); }
+
+  /* Goals */
+  .goals-list { list-style:none; }
+  .goal-item {
+    display:flex; align-items:center; gap:12px; padding:12px 16px;
+    background:rgba(255,255,255,0.05); border-radius:12px; margin-bottom:8px;
+    cursor:pointer; border:1px solid rgba(255,255,255,0.05); transition:background 0.2s;
+  }
+  .goal-item:hover { background:rgba(255,255,255,0.1); }
+  .goal-item.done { opacity:0.6; }
+  .goal-item.done .goal-text { text-decoration:line-through; }
+  .goal-check {
+    width:22px; height:22px; border-radius:50%; border:2px solid rgba(255,255,255,0.3);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.7rem;
+  }
+  .goal-item.done .goal-check { border-color:#4ade80; background:#4ade80; color:#000; }
+  .goal-text { font-size:0.9rem; flex:1; }
+
+  .nav-link { display:block; text-align:center; margin:30px auto; color:var(--accent); font-size:0.9rem; text-decoration:none; font-weight:600; }
+  .nav-link:hover { text-decoration:underline; }
+
+  @media (max-width:600px) {
+    .header h1 { font-size:1.4rem; }
+    .skills-grid { grid-template-columns:1fr; }
+    .stats-row { gap:8px; }
+    .stat-card { min-width:90px; padding:12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="header">
+  <h1>🎾 Rithvik's Tennis Progress</h1>
+  <p>Lawn Tennis &middot; Progress Tracker</p>
+  <div class="level-badge">⚡ Advanced Player</div>
+</div>
+
+<div class="overall-section" id="overall"></div>
+
+<div class="radar-section">
+  <h2>📡 Skill Radar</h2>
+  <canvas id="radarCanvas" width="400" height="400"></canvas>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-section="strokes">🎾 Strokes</div>
+  <div class="tab" data-section="fitness">🏃 Fitness</div>
+  <div class="tab" data-section="gamesense">🧠 Game Sense</div>
+  <div class="tab" data-section="matches">📊 Matches</div>
+  <div class="tab" data-section="coach">👨‍🏫 Coach</div>
+  <div class="tab" data-section="goals">🎯 Goals</div>
+</div>
+
+<div class="section active" id="sec-strokes"></div>
+<div class="section" id="sec-fitness"></div>
+<div class="section" id="sec-gamesense"></div>
+<div class="section" id="sec-matches"></div>
+<div class="section" id="sec-coach"></div>
+<div class="section" id="sec-goals"></div>
+
+<a class="nav-link" href="index.html">📚 Back to Exam Planner →</a>
+
+<script>
+const STORAGE = "rithvik_tennis";
+
+function load() { try { return JSON.parse(localStorage.getItem(STORAGE)) || {}; } catch { return {}; } }
+function save(d) { localStorage.setItem(STORAGE, JSON.stringify(d)); }
+
+// Default data
+const defaults = {
+  strokes: [
+    { name:"Forehand", emoji:"💥", rating:8 },
+    { name:"Backhand", emoji:"🔄", rating:7.5 },
+    { name:"Serve", emoji:"🚀", rating:7 },
+    { name:"Volley", emoji:"⚡", rating:7 },
+    { name:"Lob", emoji:"🌈", rating:7.5 },
+    { name:"Drop Shot", emoji:"🪶", rating:6.5 },
+    { name:"Smash", emoji:"💣", rating:8 },
+  ],
+  fitness: [
+    { name:"Speed", emoji:"⚡", rating:8 },
+    { name:"Endurance", emoji:"🫀", rating:7.5 },
+    { name:"Agility", emoji:"🐆", rating:8 },
+    { name:"Footwork", emoji:"👟", rating:7.5 },
+  ],
+  gamesense: [
+    { name:"Rally Consistency", emoji:"🔁", rating:8 },
+    { name:"Shot Placement", emoji:"🎯", rating:7.5 },
+    { name:"Match Strategy", emoji:"♟️", rating:7 },
+    { name:"Mental Toughness", emoji:"🧠", rating:7.5 },
+  ],
+  matches: { played:0, won:0, tournaments:0 },
+  feedback: [],
+  goals: [
+    { text:"Perfect my second serve", done:false },
+    { text:"Improve backhand topspin", done:false },
+    { text:"Win a tournament match", done:false },
+    { text:"Build rally consistency to 20+ shots", done:false },
+    { text:"Master net approach play", done:false },
+  ]
+};
+
+let data = load();
+if (!data.strokes) data = { ...defaults, ...data };
+if (!data.feedback) data.feedback = [];
+if (!data.goals) data.goals = defaults.goals;
+
+function getLevel(r) {
+  if (r >= 7) return { text:"Advanced", cls:"level-advanced" };
+  if (r >= 4) return { text:"Intermediate", cls:"level-intermediate" };
+  return { text:"Beginner", cls:"level-beginner" };
+}
+
+function renderSkills(category, containerId) {
+  const el = document.getElementById(containerId);
+  const items = data[category];
+  let html = `<div class="section-title">${category === 'strokes' ? '🎾 Stroke Skills' : category === 'fitness' ? '🏃 Fitness Levels' : '🧠 Game Sense'}</div><div class="skills-grid">`;
+  items.forEach((s, i) => {
+    const pct = (s.rating / 10) * 100;
+    const lv = getLevel(s.rating);
+    const color = s.rating >= 8 ? '#4ade80' : s.rating >= 6 ? '#f9d423' : '#ff4e50';
+    html += `
+      <div class="skill-card">
+        <div class="skill-top">
+          <div class="skill-name">${s.emoji} ${s.name}</div>
+          <div class="skill-rating" style="color:${color}">${s.rating}</div>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" style="width:0%;background:${color}" data-w="${pct}%"></div></div>
+        <div class="skill-bottom">
+          <div class="skill-pct">${pct.toFixed(0)}%</div>
+          <div class="skill-level ${lv.cls}">${lv.text}</div>
+        </div>
+        <input type="range" class="rating-slider" min="0" max="10" step="0.5" value="${s.rating}"
+          onchange="updateRating('${category}',${i},this.value)">
+      </div>`;
+  });
+  el.innerHTML = html + '</div>';
+  setTimeout(() => {
+    el.querySelectorAll(".skill-fill").forEach(f => { f.style.width = f.dataset.w; });
+  }, 100);
+}
+
+function updateRating(cat, idx, val) {
+  data[cat][idx].rating = parseFloat(val);
+  save(data);
+  renderSkills(cat, 'sec-' + (cat === 'gamesense' ? 'gamesense' : cat));
+  renderOverall();
+  renderRadar();
+}
+
+function renderOverall() {
+  const all = [...data.strokes, ...data.fitness, ...data.gamesense];
+  const avg = (all.reduce((s, x) => s + x.rating, 0) / all.length).toFixed(1);
+  const stars = avg >= 9 ? 5 : avg >= 8 ? 4.5 : avg >= 7 ? 4 : avg >= 6 ? 3.5 : 3;
+  const full = Math.floor(stars);
+  const half = stars % 1 >= 0.5;
+  const starsHtml = "★".repeat(full) + (half ? "½" : "") + "☆".repeat(5 - full - (half?1:0));
+  document.getElementById("overall").innerHTML = `
+    <div class="big-rating">${avg}/10</div>
+    <div class="rating-label">Overall Rating</div>
+    <div class="stars">${starsHtml}</div>
+  `;
+}
+
+// Radar Chart (pure canvas)
+function renderRadar() {
+  const canvas = document.getElementById("radarCanvas");
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2, R = Math.min(W,H) * 0.38;
+
+  // Categories for radar: avg of each group + individual highlights
+  const radarItems = [
+    { label:"Forehand", val:data.strokes[0].rating },
+    { label:"Backhand", val:data.strokes[1].rating },
+    { label:"Serve", val:data.strokes[2].rating },
+    { label:"Volley", val:data.strokes[3].rating },
+    { label:"Smash", val:data.strokes[6].rating },
+    { label:"Speed", val:data.fitness[0].rating },
+    { label:"Agility", val:data.fitness[2].rating },
+    { label:"Consistency", val:data.gamesense[0].rating },
+    { label:"Strategy", val:data.gamesense[2].rating },
+    { label:"Mental", val:data.gamesense[3].rating },
+  ];
+
+  const n = radarItems.length;
+  const angleStep = (Math.PI * 2) / n;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid rings
+  for (let ring = 2; ring <= 10; ring += 2) {
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const angle = -Math.PI/2 + i * angleStep;
+      const r = (ring / 10) * R;
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Axes
+  for (let i = 0; i < n; i++) {
+    const angle = -Math.PI/2 + i * angleStep;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(angle), cy + R * Math.sin(angle));
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.stroke();
+  }
+
+  // Data polygon
+  ctx.beginPath();
+  radarItems.forEach((item, i) => {
+    const angle = -Math.PI/2 + i * angleStep;
+    const r = (item.val / 10) * R;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = "rgba(200, 230, 32, 0.2)";
+  ctx.fill();
+  ctx.strokeStyle = "#c8e620";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Data points
+  radarItems.forEach((item, i) => {
+    const angle = -Math.PI/2 + i * angleStep;
+    const r = (item.val / 10) * R;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = "#c8e620";
+    ctx.fill();
+  });
+
+  // Labels
+  ctx.fillStyle = "#8fbc8f";
+  ctx.font = "11px Inter, sans-serif";
+  ctx.textAlign = "center";
+  radarItems.forEach((item, i) => {
+    const angle = -Math.PI/2 + i * angleStep;
+    const lr = R + 24;
+    const x = cx + lr * Math.cos(angle);
+    const y = cy + lr * Math.sin(angle);
+    ctx.fillText(item.label, x, y + 4);
+  });
+}
+
+// Matches
+function renderMatches() {
+  const el = document.getElementById("sec-matches");
+  const m = data.matches;
+  const winRate = m.played > 0 ? ((m.won/m.played)*100).toFixed(0) : 0;
+  el.innerHTML = `
+    <div class="section-title">📊 Match Statistics</div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num">${m.played}</div>
+        <div class="stat-label">Matches Played</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${m.won}</div>
+        <div class="stat-label">Wins</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${winRate}%</div>
+        <div class="stat-label">Win Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${m.tournaments}</div>
+        <div class="stat-label">Tournaments</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:16px;">
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Update your match stats:</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <label style="font-size:0.85rem;color:var(--muted);">Played: <input type="number" value="${m.played}" min="0" style="width:60px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:6px;color:#fff;font-size:0.9rem;text-align:center;" onchange="updateMatch('played',this.value)"></label>
+        <label style="font-size:0.85rem;color:var(--muted);">Won: <input type="number" value="${m.won}" min="0" style="width:60px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:6px;color:#fff;font-size:0.9rem;text-align:center;" onchange="updateMatch('won',this.value)"></label>
+        <label style="font-size:0.85rem;color:var(--muted);">Tournaments: <input type="number" value="${m.tournaments}" min="0" style="width:60px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:6px;color:#fff;font-size:0.9rem;text-align:center;" onchange="updateMatch('tournaments',this.value)"></label>
+      </div>
+    </div>`;
+}
+
+function updateMatch(key, val) {
+  data.matches[key] = parseInt(val) || 0;
+  save(data);
+  renderMatches();
+}
+
+// Coach Feedback
+function renderCoach() {
+  const el = document.getElementById("sec-coach");
+  let html = `<div class="section-title">👨‍🏫 Coach Feedback</div><div class="coach-section">`;
+
+  // Feedback form
+  html += `
+    <div class="coach-card">
+      <div class="coach-header">
+        <div class="coach-avatar">📝</div>
+        <div>
+          <div class="coach-name">Add Feedback</div>
+          <div class="coach-date">From coach or self-notes</div>
+        </div>
+      </div>
+      <textarea class="feedback-input" id="feedback-text" placeholder="What did coach say? What did you learn today?"></textarea>
+      <button class="btn" onclick="addFeedback()">💾 Save Feedback</button>
+    </div>`;
+
+  // Existing feedback (newest first)
+  const fb = [...data.feedback].reverse();
+  if (fb.length === 0) {
+    html += `<div style="text-align:center;color:var(--muted);padding:20px;font-size:0.9rem;">No feedback yet. Add your first entry above! ☝️</div>`;
+  }
+  fb.forEach((f, i) => {
+    const realIdx = data.feedback.length - 1 - i;
+    html += `
+      <div class="coach-card">
+        <div class="coach-header">
+          <div class="coach-avatar">🎾</div>
+          <div style="flex:1">
+            <div class="coach-name">Coach Feedback</div>
+            <div class="coach-date">${f.date}</div>
+          </div>
+          <span style="cursor:pointer;font-size:0.8rem;color:var(--muted);opacity:0.6" onclick="deleteFeedback(${realIdx})">✕</span>
+        </div>
+        <div class="coach-text">${f.text}</div>
+      </div>`;
+  });
+
+  el.innerHTML = html + '</div>';
+}
+
+function addFeedback() {
+  const text = document.getElementById("feedback-text").value.trim();
+  if (!text) return;
+  const now = new Date();
+  const date = `${now.getDate()} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][now.getMonth()]} ${now.getFullYear()}`;
+  data.feedback.push({ text, date });
+  save(data);
+  renderCoach();
+}
+
+function deleteFeedback(idx) {
+  data.feedback.splice(idx, 1);
+  save(data);
+  renderCoach();
+}
+
+// Goals
+function renderGoals() {
+  const el = document.getElementById("sec-goals");
+  const done = data.goals.filter(g => g.done).length;
+  let html = `<div class="section-title">🎯 Goals (${done}/${data.goals.length} completed)</div>
+    <div style="max-width:600px;margin:0 auto;">
+    <ul class="goals-list">`;
+  data.goals.forEach((g, i) => {
+    html += `<li class="goal-item ${g.done?'done':''}" onclick="toggleGoal(${i})">
+      <div class="goal-check">${g.done?'✓':''}</div>
+      <span class="goal-text">${g.text}</span>
+    </li>`;
+  });
+  html += `</ul>
+    <div style="margin-top:12px;display:flex;gap:8px;">
+      <input type="text" id="new-goal" placeholder="Add a new goal..." style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;color:#fff;font-family:inherit;font-size:0.9rem;" onkeypress="if(event.key==='Enter')addGoal()">
+      <button class="btn" onclick="addGoal()">+ Add</button>
+    </div></div>`;
+  el.innerHTML = html;
+}
+
+function toggleGoal(i) { data.goals[i].done = !data.goals[i].done; save(data); renderGoals(); }
+function addGoal() {
+  const input = document.getElementById("new-goal");
+  const text = input.value.trim();
+  if (!text) return;
+  data.goals.push({ text, done: false });
+  save(data);
+  renderGoals();
+}
+
+// Tabs
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    document.getElementById("sec-" + tab.dataset.section).classList.add("active");
+  });
+});
+
+// Particles
+function renderParticles() {
+  const c = document.getElementById("particles"); c.innerHTML = "";
+  const em = ["🎾","🏆","💚","⭐","🌟"];
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement("div"); p.className = "particle";
+    p.textContent = em[Math.floor(Math.random()*em.length)];
+    p.style.left = Math.random()*100+"%";
+    p.style.animationDuration = (12+Math.random()*18)+"s";
+    p.style.animationDelay = (Math.random()*15)+"s";
+    p.style.fontSize = (1+Math.random()*1.5)+"rem";
+    c.appendChild(p);
+  }
+}
+
+// Init
+renderParticles();
+renderOverall();
+renderRadar();
+renderSkills("strokes", "sec-strokes");
+renderSkills("fitness", "sec-fitness");
+renderSkills("gamesense", "sec-gamesense");
+renderMatches();
+renderCoach();
+renderGoals();
+</script>
+</body>
+</html>
