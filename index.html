@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rithvik's Final Exams 📚</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    min-height: 100vh;
+    color: #fff;
+    padding: 20px;
+  }
+
+  .header {
+    text-align: center;
+    padding: 30px 0 10px;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #f9d423, #ff4e50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header p {
+    color: #a9a9c8;
+    margin-top: 6px;
+    font-size: 0.95rem;
+  }
+
+  .countdown-banner {
+    text-align: center;
+    margin: 20px auto;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 16px;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+  }
+
+  .countdown-banner .label {
+    font-size: 0.85rem;
+    color: #a9a9c8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .countdown-banner .time {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #f9d423;
+    margin-top: 4px;
+  }
+
+  .countdown-banner .time.done {
+    color: #4ade80;
+    font-size: 1.4rem;
+  }
+
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 30px auto;
+  }
+
+  .exam-card {
+    background: rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .exam-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .exam-card .accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+
+  .exam-card .exam-num {
+    font-size: 0.75rem;
+    color: #a9a9c8;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+
+  .exam-card .subject {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .exam-card .date {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #c4b5fd;
+    font-weight: 600;
+  }
+
+  .exam-card .day-name {
+    font-size: 0.85rem;
+    color: #a9a9c8;
+  }
+
+  .exam-card .days-left {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: 600;
+  }
+
+  .days-left.upcoming { background: rgba(249,212,35,0.15); color: #f9d423; }
+  .days-left.soon { background: rgba(255,78,80,0.15); color: #ff4e50; }
+  .days-left.today { background: rgba(74,222,128,0.2); color: #4ade80; }
+  .days-left.done { background: rgba(148,148,180,0.15); color: #9494b4; }
+
+  .exam-card.past { opacity: 0.5; }
+  .exam-card.today-card { border: 2px solid #4ade80; }
+
+  .tip {
+    text-align: center;
+    margin: 30px auto;
+    padding: 20px;
+    max-width: 500px;
+    color: #a9a9c8;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .tip strong { color: #f9d423; }
+
+  .emoji { font-size: 2rem; margin-bottom: 8px; display: block; }
+
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.5rem; }
+    .countdown-banner .time { font-size: 1.5rem; }
+    .calendar { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📚 Rithvik's Final Exams</h1>
+  <p>Class 5 &middot; March 2026</p>
+</div>
+
+<div class="countdown-banner">
+  <div class="label">Exams begin in</div>
+  <div class="time" id="countdown"></div>
+</div>
+
+<div class="calendar" id="calendar"></div>
+
+<div class="tip">
+  <strong>💪 You've got this, Rithvik!</strong><br>
+  Study a little every day. Take breaks. Stay hydrated. You'll ace it!
+</div>
+
+<script>
+const exams = [
+  { subject: "English",   date: "2026-03-17", emoji: "📖", color: "#6366f1" },
+  { subject: "Social",    date: "2026-03-19", emoji: "🌍", color: "#f59e0b" },
+  { subject: "Maths",     date: "2026-03-21", emoji: "🔢", color: "#ef4444" },
+  { subject: "Kannada",   date: "2026-03-24", emoji: "✍️", color: "#10b981" },
+  { subject: "Sanskrit",  date: "2026-03-26", emoji: "📜", color: "#8b5cf6" },
+  { subject: "Science",   date: "2026-03-28", emoji: "🔬", color: "#06b6d4" },
+];
+
+const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function today() {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+function daysUntil(dateStr) {
+  const t = today();
+  const exam = new Date(dateStr + "T00:00:00");
+  return Math.ceil((exam - t) / (1000*60*60*24));
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return `${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function getDayName(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return dayNames[d.getDay()];
+}
+
+function renderCalendar() {
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = "";
+
+  exams.forEach((exam, i) => {
+    const days = daysUntil(exam.date);
+    let statusClass, statusText;
+
+    if (days < 0) {
+      statusClass = "done";
+      statusText = "✅ Done";
+    } else if (days === 0) {
+      statusClass = "today";
+      statusText = "🔥 TODAY";
+    } else if (days <= 3) {
+      statusClass = "soon";
+      statusText = `${days} day${days > 1 ? 's' : ''} left`;
+    } else {
+      statusClass = "upcoming";
+      statusText = `${days} days left`;
+    }
+
+    const cardClass = days < 0 ? "past" : days === 0 ? "today-card" : "";
+
+    cal.innerHTML += `
+      <div class="exam-card ${cardClass}">
+        <div class="accent" style="background:${exam.color}"></div>
+        <div class="exam-num">Exam ${i+1} of ${exams.length}</div>
+        <span class="emoji">${exam.emoji}</span>
+        <div class="subject" style="color:${exam.color}">${exam.subject}</div>
+        <div class="date">${formatDate(exam.date)}</div>
+        <div class="day-name">${getDayName(exam.date)}</div>
+        <div class="days-left ${statusClass}">${statusText}</div>
+      </div>
+    `;
+  });
+}
+
+function updateCountdown() {
+  const el = document.getElementById("countdown");
+  const firstExam = new Date("2026-03-17T00:00:00");
+  const now = new Date();
+  const diff = firstExam - now;
+
+  if (diff <= 0) {
+    // Check if all exams done
+    const lastExam = new Date("2026-03-28T23:59:59");
+    if (now > lastExam) {
+      el.textContent = "🎉 All exams done!";
+      el.classList.add("done");
+    } else {
+      el.textContent = "📝 Exams in progress!";
+      el.classList.add("done");
+    }
+    return;
+  }
+
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hrs = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+
+  el.textContent = `${days}d ${hrs}h ${mins}m`;
+}
+
+renderCalendar();
+updateCountdown();
+setInterval(updateCountdown, 60000);
+</script>
+</body>
+</html>
