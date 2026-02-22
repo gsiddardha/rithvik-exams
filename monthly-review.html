@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rithvik's Monthly Review 🏆</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg1: #0f0c29; --bg2: #302b63; --bg3: #24243e;
+    --accent: #f9d423; --accent2: #ff4e50;
+    --glass: rgba(255,255,255,0.06); --glass-border: rgba(255,255,255,0.08);
+    --muted: #a9a9c8;
+  }
+
+  body.theme-tennis { --bg1: #0a3d0a; --bg2: #1a5c1a; --bg3: #0d2e0d; --accent: #c8e620; --accent2: #4ade80; --muted: #8fbc8f; }
+  body.theme-basketball { --bg1: #2d1200; --bg2: #5c2e00; --bg3: #1a0a00; --accent: #ff8c00; --accent2: #ff4500; --muted: #d2a679; }
+  body.theme-violin { --bg1: #1a0a2e; --bg2: #3d1a6e; --bg3: #0f0520; --accent: #daa520; --accent2: #cd853f; --muted: #b39ddb; }
+  body.theme-singing { --bg1: #1a0020; --bg2: #4a0066; --bg3: #0d0015; --accent: #ff69b4; --accent2: #da70d6; --muted: #ce93d8; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+    min-height: 100vh; color: #fff; padding: 16px; padding-bottom: 80px;
+    transition: background 0.5s;
+  }
+
+  .particles { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
+  .particle { position:absolute; opacity:0.12; animation: floatUp linear infinite; }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity:0; }
+    10% { opacity:0.12; } 90% { opacity:0.12; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity:0; }
+  }
+  body > *:not(.particles) { position: relative; z-index: 1; }
+
+  .theme-switcher { display:flex; justify-content:center; gap:8px; margin:10px auto; flex-wrap:wrap; }
+  .theme-btn {
+    width:38px; height:38px; border-radius:50%; border:2px solid rgba(255,255,255,0.15);
+    cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.08); transition:all 0.2s;
+  }
+  .theme-btn:hover { transform:scale(1.15); }
+  .theme-btn.active { border-color:var(--accent); box-shadow:0 0 12px rgba(255,255,255,0.2); transform:scale(1.1); }
+
+  .header { text-align:center; padding:20px 0 6px; }
+  .header h1 {
+    font-size:1.8rem; font-weight:800;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .header p { color:var(--muted); margin-top:4px; font-size:0.9rem; }
+  .header .month-badge {
+    display:inline-block; margin-top:10px; padding:6px 20px; border-radius:20px;
+    background:var(--glass); border:1px solid var(--glass-border);
+    font-size:0.85rem; font-weight:600; color:var(--accent);
+  }
+
+  /* Summary Cards */
+  .summary-row { display:flex; justify-content:center; gap:16px; margin:24px auto; flex-wrap:wrap; max-width:600px; }
+  .summary-card {
+    text-align:center; padding:20px 28px; background:var(--glass); border-radius:16px;
+    backdrop-filter:blur(10px); border:1px solid var(--glass-border); flex:1; min-width:140px;
+  }
+  .summary-card .big { font-size:2.4rem; font-weight:800; }
+  .summary-card .label { font-size:0.8rem; color:var(--muted); margin-top:2px; }
+  .summary-card .sub { font-size:1rem; font-weight:700; margin-top:4px; }
+
+  /* Stars */
+  .stars { color: #f9d423; letter-spacing: 2px; margin-top: 6px; }
+
+  /* Subject Cards */
+  .subjects-grid {
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+    gap:12px; max-width:750px; margin:24px auto;
+  }
+  .subj-card {
+    background:var(--glass); border-radius:14px; padding:18px 20px;
+    border:1px solid var(--glass-border); position:relative; overflow:hidden;
+    transition: transform 0.2s;
+  }
+  .subj-card:hover { transform:translateY(-2px); }
+  .subj-card .accent-bar { position:absolute; top:0; left:0; right:0; height:4px; }
+  .subj-card .subj-top { display:flex; justify-content:space-between; align-items:center; }
+  .subj-card .subj-name { font-size:1rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .subj-card .subj-score { font-size:1.5rem; font-weight:800; }
+  .subj-card .subj-bar { margin-top:10px; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; }
+  .subj-card .subj-fill { height:100%; border-radius:4px; transition:width 1s ease-out; }
+  .subj-card .subj-bottom { display:flex; justify-content:space-between; margin-top:6px; }
+  .subj-card .subj-pct { font-size:0.8rem; color:var(--muted); }
+  .subj-card .subj-badge {
+    font-size:0.7rem; padding:2px 8px; border-radius:10px; font-weight:600;
+  }
+  .badge-perfect { background:rgba(74,222,128,0.2); color:#4ade80; }
+  .badge-excellent { background:rgba(249,212,35,0.15); color:#f9d423; }
+
+  /* Comparison */
+  .compare-section { max-width:700px; margin:30px auto; }
+  .compare-section h2 {
+    text-align:center; font-size:1.2rem; font-weight:700; margin-bottom:16px; color:var(--accent);
+  }
+  .compare-table {
+    width:100%; border-collapse:separate; border-spacing:0 6px;
+  }
+  .compare-table th {
+    font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;
+    color:var(--muted); text-align:left; padding:8px 12px; font-weight:600;
+  }
+  .compare-table td {
+    padding:12px; background:var(--glass); font-size:0.9rem; font-weight:500;
+  }
+  .compare-table tr td:first-child { border-radius:10px 0 0 10px; }
+  .compare-table tr td:last-child { border-radius:0 10px 10px 0; }
+  .trend-up { color:#4ade80; font-weight:700; }
+  .trend-down { color:#ff4e50; font-weight:700; }
+  .trend-same { color:var(--muted); font-weight:700; }
+
+  .nav-link {
+    display:block; text-align:center; margin:30px auto; color:var(--accent);
+    font-size:0.9rem; text-decoration:none; font-weight:600;
+  }
+  .nav-link:hover { text-decoration:underline; }
+
+  .footer { text-align:center; margin:30px auto; color:var(--muted); font-size:0.8rem; }
+
+  @media (max-width:600px) {
+    .header h1 { font-size:1.4rem; }
+    .summary-card .big { font-size:2rem; }
+    .subjects-grid { grid-template-columns:1fr; }
+    .compare-table { font-size:0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="theme-switcher">
+  <div class="theme-btn active" data-theme="default">🌙</div>
+  <div class="theme-btn" data-theme="tennis">🎾</div>
+  <div class="theme-btn" data-theme="basketball">🏀</div>
+  <div class="theme-btn" data-theme="violin">🎻</div>
+  <div class="theme-btn" data-theme="singing">🎤</div>
+</div>
+
+<div class="header">
+  <h1>🏆 Rithvik's Report Card</h1>
+  <p>Class 5 CBSE &middot; NPS Bangalore</p>
+  <div class="month-badge">📅 Monthly Review &middot; February 2026</div>
+</div>
+
+<div class="summary-row" id="summary"></div>
+
+<div class="subjects-grid" id="subjects-grid"></div>
+
+<div class="compare-section">
+  <h2>📊 Monthly Review vs Semester Review</h2>
+  <table class="compare-table" id="compare-table"></table>
+</div>
+
+<a class="nav-link" href="index.html">📚 Go to Exam Planner →</a>
+
+<div class="footer">Keep it up, Rithvik! You're doing amazing! 🌟</div>
+
+<script>
+const monthly = [
+  { subject:"English", emoji:"📖", color:"#6366f1", scored:25, total:25 },
+  { subject:"Maths", emoji:"🔢", color:"#ef4444", scored:24.5, total:25 },
+  { subject:"Social Science", emoji:"🌍", color:"#f59e0b", scored:24.75, total:25 },
+  { subject:"Kannada", emoji:"✍️", color:"#10b981", scored:25, total:25 },
+  { subject:"Sanskrit", emoji:"📜", color:"#8b5cf6", scored:25, total:25 },
+  { subject:"General Science", emoji:"🔬", color:"#06b6d4", scored:24.75, total:25 },
+];
+
+// Semester marks (out of 50) for comparison
+const semester = {
+  "English": { scored:46, total:50 },
+  "Maths": { scored:45, total:50 },
+  "Social Science": { scored:46.5, total:50 },
+  "Kannada": { scored:49, total:50 },
+  "Sanskrit": { scored:49, total:50 },
+  "General Science": { scored:45, total:50 },
+};
+
+const themes = {
+  default: ["✨","⭐","🌟","💫"],
+  tennis: ["🎾","🏆","💚","🌿"],
+  basketball: ["🏀","🔥","⛹️","🏆"],
+  violin: ["🎻","🎵","🎶","♪"],
+  singing: ["🎤","🎵","🎶","🎼"],
+};
+
+const THEME_KEY = "rithvik_theme";
+let currentTheme = localStorage.getItem(THEME_KEY) || "default";
+
+function applyTheme(t) {
+  currentTheme = t;
+  localStorage.setItem(THEME_KEY, t);
+  document.body.className = t === "default" ? "" : `theme-${t}`;
+  document.querySelectorAll(".theme-btn").forEach(b => b.classList.toggle("active", b.dataset.theme === t));
+  renderParticles();
+}
+function renderParticles() {
+  const c = document.getElementById("particles"); c.innerHTML = "";
+  const em = themes[currentTheme];
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement("div"); p.className = "particle";
+    p.textContent = em[Math.floor(Math.random()*em.length)];
+    p.style.left = Math.random()*100+"%";
+    p.style.animationDuration = (12+Math.random()*18)+"s";
+    p.style.animationDelay = (Math.random()*15)+"s";
+    p.style.fontSize = (1+Math.random()*1.5)+"rem";
+    c.appendChild(p);
+  }
+}
+document.querySelectorAll(".theme-btn").forEach(b => b.addEventListener("click", () => applyTheme(b.dataset.theme)));
+
+// Summary
+const totalScored = monthly.reduce((s,m) => s+m.scored, 0);
+const totalMax = monthly.reduce((s,m) => s+m.total, 0);
+const pct = ((totalScored/totalMax)*100).toFixed(1);
+const perfects = monthly.filter(m => m.scored === m.total).length;
+
+let grade, gradeColor;
+if (pct >= 95) { grade = "A+"; gradeColor = "#4ade80"; }
+else if (pct >= 90) { grade = "A"; gradeColor = "#4ade80"; }
+else if (pct >= 80) { grade = "B+"; gradeColor = "#f9d423"; }
+else { grade = "B"; gradeColor = "#f59e0b"; }
+
+// Stars rating (out of 5)
+const starCount = pct >= 98 ? 5 : pct >= 95 ? 4.5 : pct >= 90 ? 4 : pct >= 80 ? 3.5 : 3;
+const fullStars = Math.floor(starCount);
+const halfStar = starCount % 1 >= 0.5;
+let starsHtml = "★".repeat(fullStars) + (halfStar ? "½" : "") + "☆".repeat(5 - fullStars - (halfStar?1:0));
+
+document.getElementById("summary").innerHTML = `
+  <div class="summary-card">
+    <div class="big" style="color:var(--accent)">${totalScored}/${totalMax}</div>
+    <div class="label">Total Score</div>
+    <div class="sub" style="color:#4ade80">${pct}%</div>
+    <div class="stars">${starsHtml}</div>
+  </div>
+  <div class="summary-card">
+    <div class="big" style="color:${gradeColor}">${grade}</div>
+    <div class="label">Grade</div>
+    <div class="sub" style="color:var(--accent)">${perfects} perfect scores!</div>
+  </div>
+`;
+
+// Subject cards (sorted by score desc)
+const sorted = [...monthly].sort((a,b) => (b.scored/b.total)-(a.scored/a.total));
+const grid = document.getElementById("subjects-grid");
+sorted.forEach((m,i) => {
+  const p = ((m.scored/m.total)*100).toFixed(1);
+  const isPerfect = m.scored === m.total;
+  const medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":"";
+  grid.innerHTML += `
+    <div class="subj-card">
+      <div class="accent-bar" style="background:${m.color}"></div>
+      <div class="subj-top">
+        <div class="subj-name">${m.emoji} ${m.subject} ${medal}</div>
+        <div class="subj-score" style="color:${m.color}">${m.scored}/${m.total}</div>
+      </div>
+      <div class="subj-bar"><div class="subj-fill" style="width:0%;background:${m.color}" data-w="${p}%"></div></div>
+      <div class="subj-bottom">
+        <div class="subj-pct">${p}%</div>
+        <div class="subj-badge ${isPerfect?'badge-perfect':'badge-excellent'}">${isPerfect?'💯 PERFECT':'⭐ Excellent'}</div>
+      </div>
+    </div>`;
+});
+// Animate bars
+setTimeout(() => {
+  document.querySelectorAll(".subj-fill").forEach(f => { f.style.width = f.dataset.w; });
+}, 200);
+
+// Comparison table
+const table = document.getElementById("compare-table");
+let thtml = `<tr><th>Subject</th><th>Monthly (out of 25)</th><th>Semester (out of 50)</th><th>Monthly %</th><th>Semester %</th><th>Trend</th></tr>`;
+monthly.forEach(m => {
+  const sem = semester[m.subject];
+  const mPct = ((m.scored/m.total)*100).toFixed(1);
+  const sPct = ((sem.scored/sem.total)*100).toFixed(1);
+  const diff = (parseFloat(mPct) - parseFloat(sPct)).toFixed(1);
+  let trend, tClass;
+  if (diff > 0) { trend = `↑ +${diff}%`; tClass = "trend-up"; }
+  else if (diff < 0) { trend = `↓ ${diff}%`; tClass = "trend-down"; }
+  else { trend = "→ Same"; tClass = "trend-same"; }
+  thtml += `<tr>
+    <td>${m.emoji} ${m.subject}</td>
+    <td>${m.scored}/${m.total}</td>
+    <td>${sem.scored}/${sem.total}</td>
+    <td>${mPct}%</td>
+    <td>${sPct}%</td>
+    <td class="${tClass}">${trend}</td>
+  </tr>`;
+});
+table.innerHTML = thtml;
+
+applyTheme(currentTheme);
+</script>
+</body>
+</html>
